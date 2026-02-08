@@ -2,21 +2,24 @@
 !theme C4_brown from <C4/themes>
 !include <C4/C4_Context>
 
-Person(client, "Client", "Bank client")
-Person(bank_employee, "Employee", "Bank employee")
-Person(manager, "Back office manager", "Account Manager")
+Person(client, "Клиент", "Клиент банка")
+Person(bank_employee, "Сотрудник", "Сотрудник банка")
+Person(manager, "Менеджер back office", "Менеджер по депозитам")
+Person(call_manager, "Менеджер колл центра", "Менеджер по работе с клиентами")
 
-System(standart_bank, "Standart Bank", "Online banking")
+System(standart_bank, "Стандарт Банк", "Интернет-банкинг")
 
-Rel_D(client, standart_bank, "Views deposits info/Creates applications for deposits")
-Rel_U(manager, standart_bank, "Gets deposit application info/Accepts or rejects application")
-Rel_U(manager, client, "Сonnects about deposit")
+Rel_D(client, standart_bank, "Просматривает информацию о вкладах/Создает заявки на вклады")
+Rel_U(manager, standart_bank, "Получает информацию о заявках на вклады/Принимает или отклоняет заявку")
 
-Rel_U(bank_employee, standart_bank, "Updates/Reads deposits rate")
+Rel(call_manager, standart_bank, "Получает новую заявку")
+Rel_U(call_manager, client, "Связывается по поводу вклада")
 
-System_Ext(telecom_operator, "Telecom Operator", "Sends SMS to clients")
+Rel_U(bank_employee, standart_bank, "Обновляет/Просматривает ставки по вкладам")
 
-Rel_L(standart_bank, telecom_operator, "SMS send request")
-Rel_U(telecom_operator, client, "Sends SMS")
+System_Ext(telecom_operator, "Телеком оператор", "Отправляет SMS клиентам")
+
+Rel_L(standart_bank, telecom_operator, "Запрос на отправку SMS")
+Rel_U(telecom_operator, client, "Отправляет SMS")
 
 @enduml

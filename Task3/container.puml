@@ -1,0 +1,76 @@
+@startuml
+!theme C4_brown from <C4/themes>
+!include <C4/C4_Container>
+
+Person(client, "Клиент", "Клиент банка")
+Person(employee, "Сотрудник", "Сотрудник банка")
+Person(manager, "Менеджер back office", "Менеджер по депозитам")
+Person(call_manager, "Менеджер колл центра", "Менеджер по работе с клиентами")
+
+
+System_Boundary(standart_bank, "Standart Bank") {
+    Container(site_client, "Клиентская часть сайта", "React.js", "Вэб клиен сайта банка")
+    Container(site, "Сайт", "PHP", "Позволяет клиентам подавать заявки на депозиты, которые передаются в систему колл-центра")
+    ContainerDb(site_bd, "БД сайта", "MS SQL", "Позволяет клиентам подавать заявки на депозиты, которые передаются в систему колл-центра")
+
+    Container(internet_bank_client, "Интернет-Банк клиент", "HTML/CSS", "Cтраницы для отображения информации клиентам")
+    Container(internet_bank_client_internal, "Внутренний клиент интернет-Банка", "HTML/CSS", "Cтраницы для отображения информации сотрудникам банка")
+    Container(internet_bank_backend, "Интернет-Банк бэкенд", "ASP.NET MVC 4.5, .NET Framework 4.5", "Бэкенд для обработки запросов от клиентов")
+    ContainerDb(internet_bank_db, "Интернет-Банк БД", "MS SQL", "База данных интернет-банка")
+
+    Container(abs_client, "АБС клиент", "Delphi", "Десктопный клиент для работы сотрудников отделений")
+    ContainerDb(abs_db, "АБС БД", "Oracle", "База данных с основной информацией по счетам и бухгалтерией")
+
+    Container(sms_service, "СМС-сервис", "Java Spring Boot", "Отправляет СМС-коды для подтверждения операций")
+    ContainerDb(sms_service_bd, "БД СМС-сервиса", "MS SQL", "БД СМС сервиса")
+
+    Container(call_center_front, "ВЭБ клиент колл-центра", "React.js", "Вэб интерфейс для операторов колл-центра")
+    Container(call_center_back, "Бэкенд колл-центра", "Java Spring Boot", "Бэкенд системы колл-центра")
+    ContainerDb(call_center_db, "БД колл-центра", "PostgreSQL", "База данных системы колл-центра")
+
+    Container(deposits_service, "Сервис с данными о депозитах", "Python, Flask","Хранит инфо о доступных депозитах")
+    ContainerDb(deposits_service_db, "База данных сервиса депозитов")
+    Container(deposits_service_cron, "Регулярный процесс", "Python", "В нерабочее время собирает обновления о депзитах из АБС")
+}
+
+System_Ext(telecom_operator, "Telecom Operator", "Sends SMS to clients")
+
+
+Rel(deposits_service, deposits_service_db, "SQL")
+Rel(deposits_service_cron, deposits_service_db, "SQL")
+Rel(deposits_service_cron, abs_db, "SQL")
+
+Rel(internet_bank_client, internet_bank_backend, "Отправляет запросы")
+Rel(internet_bank_client_internal, internet_bank_backend, "Отправляет запросы")
+Rel(internet_bank_backend, internet_bank_db, "Работает с базой данных")
+Rel(abs_client, abs_db, "Работает с базой данных")
+
+Rel(site_client, site, "")
+Rel(site, site_bd, "")
+
+Rel(call_center_front, call_center_back, "HTTP")
+Rel(call_center_back, call_center_db, "SQL")
+
+Rel(client, internet_bank_client, "Просматривает депозиты")
+Rel(client, site_client, "Просматривает депозиты, оставляет заявку на депозит")
+
+Rel(site, call_center_back, "[HTTP] Передает заявки о депозите")
+
+Rel(call_manager, call_center_front, "Получает заявку на депозит")
+Rel_U(call_manager, client, "Связывается по поводу вклада")
+
+Rel(sms_service, sms_service_bd, "SQL")
+Rel(sms_service, telecom_operator, "Запрос на отправку SMS")
+Rel(telecom_operator, client, "Отправляет SMS")
+
+Rel(internet_bank_backend, sms_service, "[HTTP] Запросы на отпаравку СМС")
+
+Rel(manager, internet_bank_client_internal, "[HTTP]  Просматривает заявки на депозиты/одобряет депозиты")
+Rel(manager, abs_client, "Проверяет данные, подтверждает депозит")
+
+Rel(employee, abs_client, "Редактирует/просматривает ставки")
+
+Rel(internet_bank_backend, deposits_service, "HTTP")
+Rel(site, deposits_service, "HTTP")
+
+@enduml
