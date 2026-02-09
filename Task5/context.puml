@@ -1,0 +1,15 @@
+@startuml
+!theme C4_brown from <C4/themes>
+!include <C4/C4_Context>
+
+Person(client, "Клиент", "Клиент банка")
+Person(manager, "Менеджер back office", "Менеджер по кредитам")
+
+System(standart_bank, "Стандарт Банк", "Интернет-банкинг")
+System_Ext(telecom_operator, "Телеком оператор", "Отправляет SMS клиентам")
+
+Rel_D(client, standart_bank, "Просматривает информацию о кредитах/Создает заявки на кредиты")
+Rel_U(manager, standart_bank, "Обрабатывает заявки на кредиты")
+Rel_L(standart_bank, telecom_operator, "Запрос на отправку SMS")
+Rel_U(telecom_operator, client, "Отправляет SMS")
+@enduml
