@@ -75,7 +75,7 @@ Rel(manager, abs_client, "Проверяет данные, подтвержда�
 
 Rel(employee, abs_client, "Редактирует/просматривает ставки")
 
-Rel(internet_bank_backend, deposits_service, "HTTP")
-Rel(site, deposits_service, "HTTP")
+Rel(internet_bank_backend, deposits_service, "HTTP, получает данные о депозитах")
+Rel(site, deposits_service, "HTTP, получает данные о депозитах")
 
 @enduml
