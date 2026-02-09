@@ -6,8 +6,14 @@ Person(client, "Клиент", "Клиент банка")
 Person(bank_employee, "Сотрудник", "Сотрудник банка")
 Person(manager, "Менеджер back office", "Менеджер по депозитам")
 Person(call_manager, "Менеджер колл центра", "Менеджер по работе с клиентами")
+Person(partner_call_manager, "Менеджер партнерского колл центра", "Менеджер по работе с клиентами")
+
 
 System(standart_bank, "Стандарт Банк", "Интернет-банкинг")
+
+System_Ext(call_center_partner, "Партнерской колл центр", "Система партнерского колл центра")
+Rel(partner_call_manager, call_center_partner, "Получает заявки")
+Rel_U(partner_call_manager, client, "Связывается с клиентом")
 
 Rel_D(client, standart_bank, "Просматривает информацию о вкладах/Создает заявки на вклады")
 Rel_U(manager, standart_bank, "Получает информацию о заявках на вклады/Принимает или отклоняет заявку")
@@ -21,5 +27,7 @@ System_Ext(telecom_operator, "Телеком оператор", "Отправл�
 
 Rel_L(standart_bank, telecom_operator, "Запрос на отправку SMS")
 Rel_U(telecom_operator, client, "Отправляет SMS")
+
+Rel(standart_bank, call_center_partner, "Передает заявки")
 
 @enduml
