@@ -1,0 +1,72 @@
+@startuml
+!theme C4_brown from <C4/themes>
+!include <C4/C4_Container>
+
+Person(client, "Клиент", "Клиент банка")
+Person(manager, "Менеджер back office", "Менеджер по кредитам")
+Person(employee, "Сотрудник", "Сотрудник банка")
+Person(credit_manager, "Менеджер", "Менеджер отдела кредитования")
+System_Ext(credit_bureau, "Бюро кредитных историй", "Проверяет кредитную историю")
+
+System_Boundary(standart_bank, "Standart Bank") {
+    Container(site_client, "Клиентская часть сайта", "React.js", "Вэб клиент сайта банка")
+    Container(site, "Сайт", "PHP + MS SQL DB", "Позволяет клиентам подавать заявки на депозиты, которые передаются в систему колл-центра")
+    ' ContainerDb(site_bd, "БД сайта", "MS SQL", "Позволяет клиентам подавать заявки на депозиты, которые передаются в систему колл-центра")
+
+    Container(internet_bank_client, "Интернет-Банк клиент", "HTML/CSS", "Cтраницы для отображения информации клиентам")
+    Container(internet_bank_client_internal, "Внутренний клиент интернет-Банка", "HTML/CSS", "Cтраницы для отображения информации сотрудникам банка")
+    Container(internet_bank_backend, "Интернет-Банк бэкенд + MS SQL DB", "ASP.NET MVC 4.5, .NET Framework 4.5", "Бэкенд для обработки запросов от клиентов")
+    ' ContainerDb(internet_bank_db, "Интернет-Банк БД", "MS SQL", "База данных интернет-банка")
+
+    Container(abs_client, "АБС клиент", "Delphi", "Десктопный клиент для работы сотрудников отделений")
+    ContainerDb(abs_db, "АБС БД", "Oracle", "База данных с основной информацией по счетам и бухгалтерией")
+
+    Container(sms_service, "СМС-сервис", "Java Spring Boot, MS SQL DB", "Отправляет СМС-коды для подтверждения операций")
+    ' ContainerDb(sms_service_bd, "БД СМС-сервиса", "MS SQL", "БД СМС сервиса")
+
+    Container(credit_conveyor, "Кредитный конвейер", "Camunda BPM, Oracle DB", "Система для обработки заявок на кредит")
+    Container(credit_scoring, "Система кредитного скоринга", "Python, Flask, PostgreSQL", "Определяет рейтинг клиента для выдачи кредита")
+
+}
+
+System_Ext(telecom_operator, "Telecom Operator", "Отправляет СМС клиентам")
+
+Rel(internet_bank_client, internet_bank_backend, "Отправляет запросы")
+Rel_U(internet_bank_client_internal, internet_bank_backend, "Отправляет запросы")
+' Rel_L(internet_bank_backend, internet_bank_db, "Работает с базой данных")
+Rel_U(abs_client, abs_db, "SQL")
+
+Rel(site_client, site, "")
+' Rel_L(site, site_bd, "")
+
+Rel(client, internet_bank_client, "Просматривает информацию о кредитах/Создает заявки на кредиты")
+Rel(client, site_client, "Просматривает информацию о кредитах/Создает заявки на кредиты")
+
+
+' Rel(sms_service, sms_service_bd, "SQL")
+Rel(sms_service, telecom_operator, "Запрос на отправку SMS")
+Rel(telecom_operator, client, "Отправляет SMS")
+
+Rel_U(internet_bank_backend, sms_service, "[HTTP] Запросы на отпаравку СМС")
+
+Rel_U(manager, internet_bank_client_internal, "[HTTP]  Обрабатывает заявки на кредиты")
+Rel(manager, abs_client, "Заводит кредиты")
+
+Rel_U(site, sms_service, "HTTP, запрос на отправку СМС")
+
+Rel_U(credit_conveyor, abs_db, "SQL, раз в сутки забирает заявки на кредит")
+Rel_U(credit_manager, credit_conveyor, "Обрабатывает кредиты")
+
+Rel(credit_scoring, abs_db, "Берет данные для скоринга")
+Rel_L(credit_scoring, credit_bureau, "Берет данные для скоринга")
+
+Rel(site, credit_scoring, "Получить скоринг по общим данным БКИ")
+Rel(site, credit_conveyor, "Получает кредитные предложения")
+
+Rel(internet_bank_backend, credit_conveyor, "Получает кредитные предложения/Предодобренные кредиты")
+
+Rel_U(employee, credit_conveyor, "Добавляет доступные варианты кредитов")
+Rel(manager, credit_conveyor, "Обрабатывает преодобренные кредиты")
+
+' Rel(credit_conveyor, sms_service, "Уведомления об изменении статуса заявки")
+@enduml

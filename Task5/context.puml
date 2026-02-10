@@ -7,9 +7,11 @@ Person(manager, "Менеджер back office", "Менеджер по кред�
 
 System(standart_bank, "Стандарт Банк", "Интернет-банкинг")
 System_Ext(telecom_operator, "Телеком оператор", "Отправляет SMS клиентам")
+System_Ext(credit_bureau, "Бюро кредитных историй", "Проверяет кредитную историю")
 
 Rel_D(client, standart_bank, "Просматривает информацию о кредитах/Создает заявки на кредиты")
 Rel_U(manager, standart_bank, "Обрабатывает заявки на кредиты")
 Rel_L(standart_bank, telecom_operator, "Запрос на отправку SMS")
 Rel_U(telecom_operator, client, "Отправляет SMS")
+Rel_R(standart_bank, credit_bureau, "Запрос истории о клиенте")
 @enduml
