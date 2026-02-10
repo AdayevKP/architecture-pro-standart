@@ -22,7 +22,7 @@ System_Boundary(standart_bank, "Standart Bank") {
     Container(abs_client, "АБС клиент", "Delphi", "Десктопный клиент для работы сотрудников отделений")
     ContainerDb(abs_db, "АБС БД", "Oracle", "База данных с основной информацией по счетам и бухгалтерией")
 
-    Container(sms_service, "СМС-сервис", "Java Spring Boot, MS SQL DB", "Отправляет СМС-коды для подтверждения операций")
+    Container(sms_service, "СМС-сервис", "Java Spring Boot, PostgreSQL", "Отправляет СМС-коды для подтверждения операций")
     ' ContainerDb(sms_service_bd, "БД СМС-сервиса", "MS SQL", "БД СМС сервиса")
 
     Container(call_center_front, "ВЭБ клиент колл-центра", "React.js", "Вэб интерфейс для операторов колл-центра")
